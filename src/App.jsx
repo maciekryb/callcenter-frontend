@@ -13,14 +13,14 @@ const App = () => {
           <ul className={styles.navList}>
             <li>
               <Link to="/add-agent" className={styles.navLink}>
-                Dodaj Agenta
+                Dodaj Pracownika
               </Link>
             </li>
-            {/* <li>
+            <li>
               <Link to="/add-queue" className={styles.navLink}>
-                Dodaj Kolejkę
+              Grafik dostępności
               </Link>
-            </li> */}
+            </li>
             <li>
               <Link to="/create-schedule" className={styles.navLink}>
                 Stwórz Grafik
