@@ -2,8 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import AddAgent from './pages/AddAgent';
 import CreateSchedule from './pages/CreateSchedule';
-import AddQueue from './pages/AddQueue';
 import styles from './App.module.css';
+import AgentsAvailabilitySchedule from './pages/AgentsAvailabilitySchedule';
 
 const App = () => {
   return (
@@ -17,8 +17,8 @@ const App = () => {
               </Link>
             </li>
             <li>
-              <Link to="/add-queue" className={styles.navLink}>
-              Grafik dostępności
+              <Link to="/agents-availability-schedule" className={styles.navLink}>
+              Grafik dostępności pracowników
               </Link>
             </li>
             <li>
@@ -32,7 +32,7 @@ const App = () => {
         <div className={styles.content}>
           <Routes>
             <Route path="/add-agent" element={<AddAgent />} />
-            <Route path="/add-queue" element={<AddQueue />} />
+            <Route path="//agents-availability-schedule" element={<AgentsAvailabilitySchedule />} />
             <Route path="/create-schedule" element={<CreateSchedule />} />
           </Routes>
         </div>
