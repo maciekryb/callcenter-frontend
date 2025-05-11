@@ -16,11 +16,11 @@ const App = () => {
                 Dodaj Agenta
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link to="/add-queue" className={styles.navLink}>
                 Dodaj Kolejkę
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link to="/create-schedule" className={styles.navLink}>
                 Stwórz Grafik
