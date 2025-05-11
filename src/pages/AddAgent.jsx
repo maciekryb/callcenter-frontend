@@ -43,7 +43,7 @@ function AddAgent() {
 
   return (
     <div style={{ maxWidth: '600px', margin: '2rem auto', fontFamily: 'sans-serif' }}>
-      <h1 style={{ textAlign: 'center' }}>Dodaj Agenta</h1>
+      <h1 style={{ textAlign: 'center' }}>Dodaj pracownika</h1>
 
       {status.message && (
         <div style={{
@@ -76,7 +76,7 @@ function AddAgent() {
           style={{ padding: '0.5rem', fontSize: '1rem' }}
         />
 
-        <h3>Kolejki</h3>
+        <h3>Proszę podać efektowność przy kolejkach które będą przez daną osobe obsługiwane</h3>
         {queues.map(queue => (
           <div key={queue.name} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <label style={{ width: '150px' }}>{queue.name}</label>
