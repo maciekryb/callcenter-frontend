@@ -8,73 +8,101 @@ function App() {
     email: '',
     queues: [],
   });
-  const [message, setMessage] = useState(null);
+  const [status, setStatus] = useState({ type: null, message: null });
 
   useEffect(() => {
-    console.log("Fetching queues...");
     api.get('/queues')
       .then(res => setQueues(res.data))
-      .catch(() => alert("Nie udało się pobrać kolejek"));
+      .catch(() => setStatus({ type: 'error', message: 'Nie udało się pobrać kolejek.' }));
   }, []);
 
   const handleQueueChange = (name, efficiency) => {
     setForm(prev => {
-      const updatedQueues = prev.queues.filter(q => q.name !== name);
+      const updated = prev.queues.filter(q => q.name !== name);
       return {
         ...prev,
-        queues: [...updatedQueues, { name, efficiency }],
+        queues: [...updated, { name, efficiency }],
       };
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setStatus({ type: null, message: null });
+
     try {
       await api.post('/agents', form);
-      setMessage("Agent zapisany!");
+      setStatus({ type: 'success', message: 'Agent został zapisany!' });
       setForm({ name: '', email: '', queues: [] });
     } catch (err) {
       console.error(err);
-      setMessage("Błąd przy zapisie agenta.");
+      const msg = err.response?.data?.message || 'Wystąpił błąd.';
+      setStatus({ type: 'error', message: msg });
     }
   };
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h1>Dodaj agenta</h1>
-      {message && <p>{message}</p>}
-      <form onSubmit={handleSubmit}>
+    <div style={{ maxWidth: '600px', margin: '2rem auto', fontFamily: 'sans-serif' }}>
+      <h1 style={{ textAlign: 'center' }}>Dodaj Agenta</h1>
+
+      {status.message && (
+        <div style={{
+          padding: '1rem',
+          marginBottom: '1rem',
+          borderRadius: '5px',
+          color: status.type === 'error' ? '#721c24' : '#155724',
+          backgroundColor: status.type === 'error' ? '#f8d7da' : '#d4edda',
+          border: `1px solid ${status.type === 'error' ? '#f5c6cb' : '#c3e6cb'}`
+        }}>
+          {status.message}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <input
+          type="text"
           placeholder="Imię i nazwisko"
           value={form.name}
           onChange={e => setForm({ ...form, name: e.target.value })}
           required
+          style={{ padding: '0.5rem', fontSize: '1rem' }}
         />
-        <br /><br />
         <input
+          type="email"
           placeholder="Email"
           value={form.email}
           onChange={e => setForm({ ...form, email: e.target.value })}
           required
+          style={{ padding: '0.5rem', fontSize: '1rem' }}
         />
-        <br /><br />
-        <h3>Kolejki:</h3>
+
+        <h3>Kolejki</h3>
         {queues.map(queue => (
-          <div key={queue.name}>
-            <label>
-              {queue.name} – Efektywność:
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                max="1"
-                onChange={e => handleQueueChange(queue.name, parseFloat(e.target.value))}
-              />
-            </label>
+          <div key={queue.name} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <label style={{ width: '150px' }}>{queue.name}</label>
+            <input
+              type="number"
+              min="0"
+              max="1"
+              step="0.01"
+              placeholder="Efektywność"
+              onChange={e => handleQueueChange(queue.name, parseFloat(e.target.value))}
+              style={{ padding: '0.4rem', width: '100px' }}
+            />
           </div>
         ))}
-        <br />
-        <button type="submit">Zapisz</button>
+
+        <button type="submit" style={{
+          backgroundColor: '#007bff',
+          color: 'white',
+          padding: '0.75rem',
+          fontSize: '1rem',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer'
+        }}>
+          Zapisz agenta
+        </button>
       </form>
     </div>
   );
