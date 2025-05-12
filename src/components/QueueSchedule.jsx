@@ -6,13 +6,14 @@ import { Calendar, Clock, Info } from "lucide-react";
 const AVAILABILITY_FULL_DAY = "full_day";
 const AVAILABILITY_PARTIAL_DAY = "partial_day";
 
-const QueueSchedule = ({queueName, queueId}) => {
+const QueueSchedule = ({ queueName, queueId }) => {
   const [data, setData] = useState([]);
   const [status, setStatus] = useState({ type: null, message: null });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get(`/queue/${queueId}/agents-schedule`)
+    api
+      .get(`/queue/${queueId}/agents-schedule`)
       .then((res) => {
         setData(res.data);
         setLoading(false);
@@ -59,8 +60,6 @@ const QueueSchedule = ({queueName, queueId}) => {
 
   return (
     <div className=" mx-auto py-8 px-4 sm:px-6">
-
-
       {status.type === "error" && (
         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded mb-6">
           <div className="flex items-center">
@@ -90,7 +89,7 @@ const QueueSchedule = ({queueName, queueId}) => {
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 bg-gray-50 sticky left-0 z-10"
                 >
                   <div className="flex items-center space-x-1">
-                    <span>Kolejka {queueName}</span>
+                    <span className="font-bold text-lg">{queueName}</span>
                   </div>
                 </th>
                 {dates.map((date) => (
