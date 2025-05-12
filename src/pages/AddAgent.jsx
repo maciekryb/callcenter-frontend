@@ -13,12 +13,19 @@ function AddAgent() {
   });
   const [status, setStatus] = useState({ type: null, message: null });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api
       .get("/queues")
-      .then((res) => setQueues(res.data))
-      .catch(() => setStatus({ type: "error", message: "Nie udało się pobrać kolejek." }));
+      .then((res) => {
+        setQueues(res.data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setStatus({ type: "error", message: "Nie udało się pobrać kolejek." });
+        setLoading(false);
+      });
   }, []);
 
   const handleQueueChange = (name, efficiency) => {
@@ -110,37 +117,43 @@ function AddAgent() {
             </div>
           </div>
 
-          <div className="pt-4 border-t border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Efektywność w obsłudze kolejek</h3>
-            <p className="text-sm text-gray-500 mb-4">
-              Proszę podać efektywność (0-1) przy kolejkach, które będą obsługiwane przez daną osobę
-            </p>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              {queues.map((queue) => (
-                <div key={queue.name} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-md">
-                  <label className="text-sm font-medium text-gray-700 flex-grow">{queue.name}</label>
-                  <div className="relative w-24">
-                    <input
-                      type="number"
-                      min="0"
-                      max="1"
-                      step="0.01"
-                      placeholder="0.00"
-                      onChange={(e) => {
-                        let value = Number.parseFloat(e.target.value);
-                        if (value < 0) value = 0;
-                        if (value > 1) value = 1;
-                        handleQueueChange(queue.name, value);
-                        e.target.value = value; // Ensure the input reflects the corrected value
-                      }}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-right"
-                    />
-                  </div>
-                </div>
-              ))}
+          {loading ? (
+            <div className="flex justify-center items-center h-61">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
             </div>
-          </div>
+          ) : (
+            <div className="pt-4 border-t border-gray-200">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Efektywność w obsłudze kolejek</h3>
+              <p className="text-sm text-gray-500 mb-4">
+                Proszę podać efektywność (0-1) przy kolejkach, które będą obsługiwane przez daną osobę
+              </p>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                {queues.map((queue) => (
+                  <div key={queue.name} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-md">
+                    <label className="text-sm font-medium text-gray-700 flex-grow">{queue.name}</label>
+                    <div className="relative w-24">
+                      <input
+                        type="number"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        placeholder="0.00"
+                        onChange={(e) => {
+                          let value = Number.parseFloat(e.target.value);
+                          if (value < 0) value = 0;
+                          if (value > 1) value = 1;
+                          handleQueueChange(queue.name, value);
+                          e.target.value = value; // Ensure the input reflects the corrected value
+                        }}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-right"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="pt-4">
             <button
