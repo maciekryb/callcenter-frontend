@@ -106,52 +106,54 @@ const AgentsAvailabilitySchedule = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {Object.entries(groupedByAgent).map(([agentId, schedules], index) => (
-                <tr key={agentId} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-r border-gray-200 sticky left-0 z-10 bg-inherit">
-                    {agentId}
-                  </td>
-                  {dates.map((date) => {
-                    const schedule = schedules.find((s) => s.date === date);
-                    console.log(schedule);
-                    return (
-                      <td key={`${agentId}-${date}`} className="px-4 py-4 whitespace-nowrap text-sm text-center">
-                        {schedule ? (
-                          <div className="relative group">
-                            {schedule.availability_status === AVAILABILITY_FULL_DAY ? (
-                              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800">
-                                <Clock className="mr-1 h-3 w-3" />
-                                Cały dzień
-                              </span>
-                            ) : schedule.availability_status === AVAILABILITY_PARTIAL_DAY ? (
-                              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-sky-100 text-sky-800">
-                                <Clock className="mr-1 h-3 w-3" />
-                                {formatTime(schedule.start_time)} - {formatTime(schedule.end_time)}
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-200 text-emerald-800">
-                                <Clock className="mr-1 h-3 w-3" />
-                                Nieobecność
-                              </span>
-                            )}
-                            {schedule.notes && (
-                              <div className="group relative inline-block ml-1">
-                                <Info className="h-4 w-4 text-gray-400 cursor-help" />
-                                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute z-20 bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 p-2 bg-gray-800 text-white text-xs rounded shadow-lg">
-                                  {schedule.notes}
-                                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+              {Object.entries(groupedByAgent).map(([agentId, schedules], index) => {
+                const agent = data.find((item) => item.agent_id === parseInt(agentId))?.agent || {};
+                return (
+                  <tr key={agentId} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-r border-gray-200 sticky left-0 z-10 bg-inherit">
+                      {agent.name}
+                    </td>
+                    {dates.map((date) => {
+                      const schedule = schedules.find((s) => s.date === date);
+                      return (
+                        <td key={`${agentId}-${date}`} className="px-4 py-4 whitespace-nowrap text-sm text-center">
+                          {schedule ? (
+                            <div className="relative group">
+                              {schedule.availability_status === AVAILABILITY_FULL_DAY ? (
+                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800">
+                                  <Clock className="mr-1 h-3 w-3" />
+                                  Cały dzień
+                                </span>
+                              ) : schedule.availability_status === AVAILABILITY_PARTIAL_DAY ? (
+                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-sky-100 text-sky-800">
+                                  <Clock className="mr-1 h-3 w-3" />
+                                  {formatTime(schedule.start_time)} - {formatTime(schedule.end_time)}
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-200 text-emerald-800">
+                                  <Clock className="mr-1 h-3 w-3" />
+                                  Nieobecność
+                                </span>
+                              )}
+                              {schedule.notes && (
+                                <div className="group relative inline-block ml-1">
+                                  <Info className="h-4 w-4 text-gray-400 cursor-help" />
+                                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute z-20 bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 p-2 bg-gray-800 text-white text-xs rounded shadow-lg">
+                                    {schedule.notes}
+                                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+                                  </div>
                                 </div>
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <span className="text-gray-300 inline-block w-full text-center">—</span>
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-gray-300 inline-block w-full text-center">—</span>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
