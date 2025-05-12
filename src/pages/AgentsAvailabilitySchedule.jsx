@@ -1,54 +1,54 @@
-"use client"
-import { useEffect, useState } from "react"
-import { api } from "../api"
-import { Calendar, Clock, Info } from "lucide-react"
+"use client";
+import { useEffect, useState } from "react";
+import { api } from "../api";
+import { Calendar, Clock, Info } from "lucide-react";
 
 const AVAILABILITY_FULL_DAY = "full_day";
 const AVAILABILITY_PARTIAL_DAY = "partial_day";
 const AVAILABILITY_NOT_AVAILABLE = "not_available";
 
 const AgentsAvailabilitySchedule = () => {
-  const [data, setData] = useState([])
-  const [status, setStatus] = useState({ type: null, message: null })
-  const [loading, setLoading] = useState(true)
+  const [data, setData] = useState([]);
+  const [status, setStatus] = useState({ type: null, message: null });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api
       .get("/agent/schedule")
       .then((res) => {
-        setData(res.data)
-        setLoading(false)
+        setData(res.data);
+        setLoading(false);
       })
       .catch(() => {
-        setStatus({ type: "error", message: "Nie udało się pobrać kolejek." })
-        setLoading(false)
-      })
-  }, [])
+        setStatus({ type: "error", message: "Nie udało się pobrać kolejek." });
+        setLoading(false);
+      });
+  }, []);
 
   // Grupowanie danych według agenta
   const groupedByAgent = data.reduce((acc, item) => {
     if (!acc[item.agent_id]) {
-      acc[item.agent_id] = []
+      acc[item.agent_id] = [];
     }
-    acc[item.agent_id].push(item)
-    return acc
-  }, {})
+    acc[item.agent_id].push(item);
+    return acc;
+  }, {});
 
   // Formatowanie czasu
   const formatTime = (time) => {
-    if (!time) return ""
-    return time.substring(0, 5) // Usuwa sekundy
-  }
+    if (!time) return "";
+    return time.substring(0, 5); // Usuwa sekundy
+  };
 
   // Lista unikalnych dat
-  const dates = [...new Set(data.map((item) => item.date))].sort()
+  const dates = [...new Set(data.map((item) => item.date))].sort();
 
   // Formatowanie daty
   const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    const weekday = date.toLocaleDateString("pl-PL", { weekday: "short" })
-    const day = date.getDate()
-    const month = date.toLocaleDateString("pl-PL", { month: "short" })
+    const date = new Date(dateString);
+    const weekday = date.toLocaleDateString("pl-PL", { weekday: "short" });
+    const day = date.getDate();
+    const month = date.toLocaleDateString("pl-PL", { month: "short" });
 
     return (
       <div className="flex flex-col items-center">
@@ -56,11 +56,11 @@ const AgentsAvailabilitySchedule = () => {
         <span className="text-lg font-bold">{day}</span>
         <span className="text-xs text-gray-500">{month}</span>
       </div>
-    )
-  }
+    );
+  };
 
   return (
-     <div className=" mx-auto py-8 px-4 sm:px-6">
+    <div className=" mx-auto py-8 px-4 sm:px-6">
       <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center text-gray-800 flex items-center justify-center gap-2">
         <Calendar className="h-6 w-6 text-emerald-600" />
         Grafik dostępności pracowników
@@ -112,8 +112,8 @@ const AgentsAvailabilitySchedule = () => {
                     {agentId}
                   </td>
                   {dates.map((date) => {
-                    const schedule = schedules.find((s) => s.date === date)
-                       console.log(schedule) 
+                    const schedule = schedules.find((s) => s.date === date);
+                    console.log(schedule);
                     return (
                       <td key={`${agentId}-${date}`} className="px-4 py-4 whitespace-nowrap text-sm text-center">
                         {schedule ? (
@@ -129,7 +129,10 @@ const AgentsAvailabilitySchedule = () => {
                                 {formatTime(schedule.start_time)} - {formatTime(schedule.end_time)}
                               </span>
                             ) : (
-                              <span className="text-gray-300 inline-block w-full text-center">—</span>
+                              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-200 text-emerald-800">
+                                <Clock className="mr-1 h-3 w-3" />
+                                Nieobecność
+                              </span>
                             )}
                             {schedule.notes && (
                               <div className="group relative inline-block ml-1">
@@ -145,7 +148,7 @@ const AgentsAvailabilitySchedule = () => {
                           <span className="text-gray-300 inline-block w-full text-center">—</span>
                         )}
                       </td>
-                    )
+                    );
                   })}
                 </tr>
               ))}
@@ -154,7 +157,7 @@ const AgentsAvailabilitySchedule = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default AgentsAvailabilitySchedule
+export default AgentsAvailabilitySchedule;
