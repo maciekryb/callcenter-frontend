@@ -3,6 +3,10 @@ import { useEffect, useState } from "react"
 import { api } from "../api"
 import { Calendar, Clock, Info } from "lucide-react"
 
+const AVAILABILITY_FULL_DAY = "full_day";
+const AVAILABILITY_PARTIAL_DAY = "partial_day";
+const AVAILABILITY_NOT_AVAILABLE = "not_available";
+
 const AgentsAvailabilitySchedule = () => {
   const [data, setData] = useState([])
   const [status, setStatus] = useState({ type: null, message: null })
@@ -109,20 +113,23 @@ const AgentsAvailabilitySchedule = () => {
                   </td>
                   {dates.map((date) => {
                     const schedule = schedules.find((s) => s.date === date)
+                       console.log(schedule) 
                     return (
                       <td key={`${agentId}-${date}`} className="px-4 py-4 whitespace-nowrap text-sm text-center">
                         {schedule ? (
                           <div className="relative group">
-                            {schedule.all_day ? (
+                            {schedule.availability_status === AVAILABILITY_FULL_DAY ? (
                               <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800">
                                 <Clock className="mr-1 h-3 w-3" />
                                 Cały dzień
                               </span>
-                            ) : (
+                            ) : schedule.availability_status === AVAILABILITY_PARTIAL_DAY ? (
                               <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-sky-100 text-sky-800">
                                 <Clock className="mr-1 h-3 w-3" />
                                 {formatTime(schedule.start_time)} - {formatTime(schedule.end_time)}
                               </span>
+                            ) : (
+                              <span className="text-gray-300 inline-block w-full text-center">—</span>
                             )}
                             {schedule.notes && (
                               <div className="group relative inline-block ml-1">
