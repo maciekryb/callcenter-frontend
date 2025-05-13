@@ -1,10 +1,5 @@
-"use client";
 import { useEffect, useState } from "react";
 import { api } from "../api";
-import { Calendar, Clock, Info } from "lucide-react";
-
-const AVAILABILITY_FULL_DAY = "full_day";
-const AVAILABILITY_PARTIAL_DAY = "partial_day";
 
 const WorkLoadPrediction = ({ queueName, queueId }) => {
   const [data, setData] = useState([]);
@@ -13,7 +8,7 @@ const WorkLoadPrediction = ({ queueName, queueId }) => {
 
   useEffect(() => {
     api
-      .get(`/queue/${queueId}/agents-schedule`)
+      .get(`/queue/${queueId}/work-load`)
       .then((res) => {
         setData(res.data);
         setLoading(false);
