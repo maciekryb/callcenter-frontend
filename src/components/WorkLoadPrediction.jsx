@@ -43,43 +43,46 @@ const WorkLoadPrediction = ({ queueName, queueId }) => {
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-lg shadow">
-          <table className="min-w-full divide-y divide-gray-200 text-sm">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="sticky left-0 bg-gray-100 px-4 py-3 text-left font-medium text-gray-600 uppercase tracking-wider">
-                  Godzina
-                </th>
-                {Object.keys(data).map((date) => (
-                  <th key={date} className="px-4 py-3 text-left font-medium text-gray-600 uppercase tracking-wider">
-                    {date}
+        <div>
+          <h2 className="text-2xl font-bold text-gray-700 mb-6 text-center">{queueName}</h2>
+          <div className="overflow-x-auto rounded-lg shadow">
+            <table className="min-w-full divide-y divide-gray-200 text-sm">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="sticky left-0 bg-gray-100 px-4 py-3 text-left font-medium text-gray-600 uppercase tracking-wider">
+                    Godzina
                   </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {hours.map((hour, idx) => (
-                <tr key={hour} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50 hover:bg-gray-100"}>
-                  <td className="sticky left-0 px-4 py-3 whitespace-nowrap font-medium text-gray-900 bg-inherit">
-                    {hour}
-                  </td>
-                  {Object.keys(data).map((date) => {
-                    const hourData = data[date].find((entry) => entry.hour === hour);
-                    const count = hourData ? hourData.count : 0;
-                    return (
-                      <td
-                        key={`${date}-${hour}`}
-                        className={`px-4 py-3 whitespace-nowrap text-center "text-gray-500"
-                    }`}
-                      >
-                        {count}
-                      </td>
-                    );
-                  })}
+                  {Object.keys(data).map((date) => (
+                    <th key={date} className="px-4 py-3 text-left font-medium text-gray-600 uppercase tracking-wider">
+                      {date}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {hours.map((hour, idx) => (
+                  <tr key={hour} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50 hover:bg-gray-100"}>
+                    <td className="sticky left-0 px-4 py-3 whitespace-nowrap font-medium text-gray-900 bg-inherit">
+                      {hour}
+                    </td>
+                    {Object.keys(data).map((date) => {
+                      const hourData = data[date].find((entry) => entry.hour === hour);
+                      const count = hourData ? hourData.count : 0;
+                      return (
+                        <td
+                          key={`${date}-${hour}`}
+                          className={`px-4 py-3 whitespace-nowrap text-center "text-gray-500"
+                    }`}
+                        >
+                          {count}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
