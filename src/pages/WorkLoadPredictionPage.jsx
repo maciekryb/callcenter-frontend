@@ -1,4 +1,5 @@
 import { Calendar } from "lucide-react";
+import WorkLoadPrediction from "../components/WorkLoadPrediction";
 
 const WorkLoadPredictionPage = () => {
   return (
@@ -8,6 +9,7 @@ const WorkLoadPredictionPage = () => {
        Grafik przewidywanego obciążenia
       </h2>
 
+      <WorkLoadPrediction queueName="Kolejka ogólna" queueId={1} />
 
     </div>
   );
