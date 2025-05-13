@@ -43,26 +43,36 @@ const WorkLoadPrediction = ({ queueName, queueId }) => {
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
         </div>
       ) : (
-        <div>
-          <h2 className="text-xl font-bold mb-4">Workload Prediction for {queueName}</h2>
-          <table className="table-auto border-collapse border border-gray-300 w-full text-sm">
-            <thead>
+        <div className="overflow-x-auto rounded-lg shadow">
+          <table className="min-w-full divide-y divide-gray-200 text-sm">
+            <thead className="bg-gray-100">
               <tr>
-                <th className="border border-gray-300 px-4 py-2">Hour</th>
+                <th className="sticky left-0 bg-gray-100 px-4 py-3 text-left font-medium text-gray-600 uppercase tracking-wider">
+                  Godzina
+                </th>
                 {Object.keys(data).map((date) => (
-                  <th key={date} className="border border-gray-300 px-4 py-2">{date}</th>
+                  <th key={date} className="px-4 py-3 text-left font-medium text-gray-600 uppercase tracking-wider">
+                    {date}
+                  </th>
                 ))}
               </tr>
             </thead>
-            <tbody>
-              {hours.map((hour) => (
-                <tr key={hour}>
-                  <td className="border border-gray-300 px-4 py-2">{hour}</td>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {hours.map((hour, idx) => (
+                <tr key={hour} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50 hover:bg-gray-100"}>
+                  <td className="sticky left-0 px-4 py-3 whitespace-nowrap font-medium text-gray-900 bg-inherit">
+                    {hour}
+                  </td>
                   {Object.keys(data).map((date) => {
                     const hourData = data[date].find((entry) => entry.hour === hour);
+                    const count = hourData ? hourData.count : 0;
                     return (
-                      <td key={`${date}-${hour}`} className="border border-gray-300 px-4 py-2">
-                        {hourData ? hourData.count : 0}
+                      <td
+                        key={`${date}-${hour}`}
+                        className={`px-4 py-3 whitespace-nowrap text-center "text-gray-500"
+                    }`}
+                      >
+                        {count}
                       </td>
                     );
                   })}
