@@ -5,6 +5,7 @@ import AddAgent from "./pages/AddAgent";
 import CreateSchedule from "./pages/CreateSchedule";
 import AgentsAvailabilitySchedule from "./pages/AgentsAvailabilitySchedule";
 import Dashboard from "./pages/Dashboard";
+import WorkLoadPredictionPage from "./pages/WorkLoadPredictionPage";
 
 const AppContent = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
   const location = useLocation();
@@ -93,6 +94,7 @@ const AppContent = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
           <Route path="/" element={<Dashboard />} />
           <Route path="/add-agent" element={<AddAgent />} />
           <Route path="/agents-availability-schedule" element={<AgentsAvailabilitySchedule />} />
+          <Route path="/work-load-prediction" element={<WorkLoadPredictionPage />} />
           <Route path="/create-schedule" element={<CreateSchedule />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
