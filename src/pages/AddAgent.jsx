@@ -125,7 +125,7 @@ function AddAgent() {
             <div className="pt-4 border-t border-gray-200">
               <h3 className="text-lg font-medium text-gray-900 mb-4">Efektywność w obsłudze kolejek</h3>
               <p className="text-sm text-gray-500 mb-4">
-                Proszę podać efektywność (0-1) przy kolejkach, które będą obsługiwane przez daną osobę
+                Proszę podać średnią liczbe telefonów, które pracownik może obsłużyć w ciągu godziny w każdej kolejce.
               </p>
 
               <div className="grid gap-4 sm:grid-cols-2">
@@ -136,13 +136,14 @@ function AddAgent() {
                       <input
                         type="number"
                         min="0"
-                        max="1"
-                        step="0.01"
-                        placeholder="0.00"
+                        max="100"
+                        step="1"
+                        placeholder="0"
                         onChange={(e) => {
-                          let value = Number.parseFloat(e.target.value);
+                          let value = Number.parseInt(e.target.value, 10);
+                          if (isNaN(value)) value = "";
                           if (value < 0) value = 0;
-                          if (value > 1) value = 1;
+                          if (value > 100) value = 100;
                           handleQueueChange(queue.name, value);
                           e.target.value = value; // Ensure the input reflects the corrected value
                         }}
