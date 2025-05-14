@@ -1,4 +1,4 @@
-System Zarządzania Grafikiem (Frontend)
+# System Zarządzania Grafikiem (Frontend)
 
 Frontend aplikacji do zarządzania grafikami agentów Call Center w firmie telekomunikacyjnej. Pozwala na przeglądanie, tworzenie i zarządzanie grafikami pracy agentów na podstawie prognoz zapotrzebowania, dostępności oraz wydajności pracowników.
 
@@ -86,7 +86,7 @@ Szczegóły i opis endpointów znajdziesz w dokumentacji backendu.
 
 ## Uruchomienie całości (backend + frontend)
 
-1. Uruchom backend zgodnie z instrukcją w repozytorium backendu.
+1. Uruchom backend zgodnie z instrukcją w repozytorium backendu <https://github.com/maciekryb/callcenter-backend>
 2. Uruchom frontend według powyższych kroków.
 3. Upewnij się, że adresy API w frontendzie wskazują na backend (np. `http://localhost:8000/api`).
 
