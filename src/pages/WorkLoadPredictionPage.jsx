@@ -10,6 +10,9 @@ const WorkLoadPredictionPage = () => {
       </h2>
 
       <WorkLoadPrediction queueName="Kolejka ogólna" queueId={1} />
+      <WorkLoadPrediction queueName="Sprzedaż" queueId={2} />
+      <WorkLoadPrediction queueName="Do sprzedaż" queueId={3} />
+      <WorkLoadPrediction queueName="Wsparcie techniczne" queueId={4} />
     </div>
   );
 };
