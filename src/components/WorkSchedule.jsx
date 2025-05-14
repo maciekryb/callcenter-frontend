@@ -27,12 +27,12 @@ const WorkSchedule = ({ queueName, queueId }) => {
   // Wyciągnij unikalne daty
   const dates = [...new Set(data.map((item) => item.date))].sort();
 
-  // Wyciągnij unikalnych agentów z nazwami
+  // Wyciągnij unikalnych agentów z nazwami (teraz z agent_name)
   const agents = [];
   const agentMap = {};
   data.forEach((item) => {
     if (!agentMap[item.agent_id]) {
-      agentMap[item.agent_id] = item.agent?.name || `Agent ${item.agent_id}`;
+      agentMap[item.agent_id] = item.agent_name || `Agent ${item.agent_id}`;
       agents.push({ id: item.agent_id, name: agentMap[item.agent_id] });
     }
   });
