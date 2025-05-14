@@ -53,7 +53,7 @@ const Dashboard = () => {
         <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
           <div className="p-5">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium">Stwórz Grafik</h3>
+              <h3 className="text-lg font-medium">Przeglądaj Grafik</h3>
               <ClipboardList className="h-5 w-5 text-gray-400" />
             </div>
             <p className="mt-2 text-sm text-gray-500 min-h-[60px]">
@@ -62,7 +62,7 @@ const Dashboard = () => {
           </div>
           <div className="px-5 py-4 bg-gray-50 border-t">
             <Link
-              to="/create-schedule"
+              to="/work-schedule"
               className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Przejdź
