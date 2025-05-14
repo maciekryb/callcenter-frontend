@@ -22,7 +22,7 @@ const AppContent = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
     { path: "/add-agent", label: "Dodaj Pracownika", icon: <Users className="h-5 w-5 mr-2" /> },
     { path: "/agents-availability-schedule", label: "Grafik dostępności", icon: <Calendar className="h-5 w-5 mr-2" /> },
     { path: "/work-load-prediction", label: "Przewidywane obciążenie", icon: <BarChart2 className="h-5 w-5 mr-2" /> },
-    { path: "/create-schedule", label: "Grafik Pracy", icon: <ClipboardList className="h-5 w-5 mr-2" /> },
+    { path: "/work-schedule", label: "Grafik Pracy", icon: <ClipboardList className="h-5 w-5 mr-2" /> },
   ];
 
   return (
@@ -95,7 +95,7 @@ const AppContent = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
           <Route path="/add-agent" element={<AddAgent />} />
           <Route path="/agents-availability-schedule" element={<AgentsAvailabilitySchedule />} />
           <Route path="/work-load-prediction" element={<WorkLoadPredictionPage />} />
-          <Route path="/create-schedule" element={<WorkSchedulePage />} />
+          <Route path="/work-schedule" element={<WorkSchedulePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
