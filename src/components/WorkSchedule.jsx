@@ -24,20 +24,21 @@ const WorkSchedule = ({ queueName, queueId }) => {
       });
   }, []);
 
-  // Wyciągnij unikalne daty i godziny
+  // Wyciągnij unikalne daty
   const dates = [...new Set(data.map((item) => item.date))].sort();
-  const hours = [...new Set(data.map((item) => item.start_time))].sort();
 
-  // Mapowanie agent_id -> agent.name (jeśli agent jest w danych)
-  const agentNames = {};
+  // Wyciągnij unikalnych agentów z nazwami
+  const agents = [];
+  const agentMap = {};
   data.forEach((item) => {
-    if (item.agent && item.agent_id) {
-      agentNames[item.agent_id] = item.agent.name;
+    if (!agentMap[item.agent_id]) {
+      agentMap[item.agent_id] = item.agent?.name || `Agent ${item.agent_id}`;
+      agents.push({ id: item.agent_id, name: agentMap[item.agent_id] });
     }
   });
 
-  // Pomocnicza funkcja do formatowania godziny
-  const formatHour = (time) => time?.substring(0, 5);
+  // Pomocnicza funkcja do formatowania zakresu godzin
+  const formatHourRange = (start, end) => `${start?.substring(0, 5)}-${end?.substring(0, 5)}`;
 
   // Pomocnicza funkcja do formatowania daty
   const formatDate = (dateString) => {
@@ -52,6 +53,25 @@ const WorkSchedule = ({ queueName, queueId }) => {
         <span className="text-xs text-gray-500">{month}</span>
       </div>
     );
+  };
+
+  // Funkcja do scalania sąsiadujących zakresów godzin
+  const mergeRanges = (ranges) => {
+    if (ranges.length === 0) return [];
+    // Zakładamy, że ranges są posortowane po start_time
+    const merged = [];
+    let [start, end] = [ranges[0].start_time, ranges[0].end_time];
+    for (let i = 1; i < ranges.length; i++) {
+      if (ranges[i].start_time === end) {
+        // Przedziały są ciągłe, wydłuż zakres
+        end = ranges[i].end_time;
+      } else {
+        merged.push({ start, end });
+        [start, end] = [ranges[i].start_time, ranges[i].end_time];
+      }
+    }
+    merged.push({ start, end });
+    return merged;
   };
 
   return (
@@ -81,7 +101,7 @@ const WorkSchedule = ({ queueName, queueId }) => {
             <thead className="bg-gray-50 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 bg-gray-50 sticky left-0 z-10">
-                  Godzina
+                  Agent
                 </th>
                 {dates.map((date) => (
                   <th key={date} className="px-4 py-3 text-center font-medium text-gray-500 border-b border-gray-200">
@@ -91,24 +111,25 @@ const WorkSchedule = ({ queueName, queueId }) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {hours.map((hour, idx) => (
-                <tr key={hour} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+              {agents.map((agent, idx) => (
+                <tr key={agent.id} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                   <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 border-r border-gray-200 sticky left-0 z-10 bg-inherit">
-                    {formatHour(hour)}
+                    {agent.name}
                   </td>
                   {dates.map((date) => {
-                    // Znajdź wszystkich agentów mających dyżur w tej godzinie i dacie
-                    const agentsOnDuty = data
-                      .filter((item) => item.date === date && item.start_time === hour)
-                      .map((item) => agentNames[item.agent_id] || `Agent ${item.agent_id}`);
+                    // Znajdź i scal zakresy godzin tego agenta w danym dniu
+                    const ranges = data
+                      .filter((item) => item.agent_id === agent.id && item.date === date)
+                      .sort((a, b) => a.start_time.localeCompare(b.start_time));
+                    const merged = mergeRanges(ranges);
                     return (
-                      <td key={`${hour}-${date}`} className="px-4 py-3 whitespace-nowrap text-sm text-center">
-                        {agentsOnDuty.length > 0 ? (
-                          agentsOnDuty.map((name, i) => (
-                            <div key={i} className="inline-block bg-emerald-100 text-emerald-800 rounded px-2 py-1 m-0.5 text-xs">
-                              {name}
-                            </div>
-                          ))
+                      <td key={`${agent.id}-${date}`} className="px-4 py-3 whitespace-nowrap text-sm text-center">
+                        {merged.length > 0 ? (
+                          merged.map((r, i) =>
+                            <span key={i}>
+                              {r.start.substring(0, 5)}-{r.end.substring(0, 5)}{i < merged.length - 1 ? ", " : ""}
+                            </span>
+                          )
                         ) : (
                           <span className="text-gray-300">—</span>
                         )}
