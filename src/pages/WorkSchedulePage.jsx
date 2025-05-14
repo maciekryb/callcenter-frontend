@@ -1,4 +1,5 @@
 import { Calendar } from "lucide-react";
+import WorkSchedule from "../components/WorkSchedule";
 
 const WorkSchedulePage = () => {
   return (
@@ -7,7 +8,7 @@ const WorkSchedulePage = () => {
         <Calendar className="h-6 w-6 text-emerald-600" />
         Grafik pracy
       </h2>
-      {/* <QueueSchedule queueName="Kolejka ogólna" queueId={1} /> */}
+      <WorkSchedule queueName="Kolejka ogólna" queueId={1} />
     </div>
   );
 };

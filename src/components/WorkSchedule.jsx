@@ -24,31 +24,27 @@ const WorkSchedule = ({ queueName, queueId }) => {
       });
   }, []);
 
-  // Grupowanie danych według agenta
-  const groupedByAgent = data.reduce((acc, item) => {
-    if (!acc[item.agent_id]) {
-      acc[item.agent_id] = [];
-    }
-    acc[item.agent_id].push(item);
-    return acc;
-  }, {});
-
-  // Formatowanie czasu
-  const formatTime = (time) => {
-    if (!time) return "";
-    return time.substring(0, 5); // Usuwa sekundy
-  };
-
-  // Lista unikalnych dat
+  // Wyciągnij unikalne daty i godziny
   const dates = [...new Set(data.map((item) => item.date))].sort();
+  const hours = [...new Set(data.map((item) => item.start_time))].sort();
 
-  // Formatowanie daty
+  // Mapowanie agent_id -> agent.name (jeśli agent jest w danych)
+  const agentNames = {};
+  data.forEach((item) => {
+    if (item.agent && item.agent_id) {
+      agentNames[item.agent_id] = item.agent.name;
+    }
+  });
+
+  // Pomocnicza funkcja do formatowania godziny
+  const formatHour = (time) => time?.substring(0, 5);
+
+  // Pomocnicza funkcja do formatowania daty
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const weekday = date.toLocaleDateString("pl-PL", { weekday: "short" });
     const day = date.getDate();
     const month = date.toLocaleDateString("pl-PL", { month: "short" });
-
     return (
       <div className="flex flex-col items-center">
         <span className="text-sm font-medium text-gray-600">{weekday}</span>
@@ -59,7 +55,7 @@ const WorkSchedule = ({ queueName, queueId }) => {
   };
 
   return (
-    <div className=" mx-auto py-8 px-4 sm:px-6">
+    <div className="mx-auto py-8 px-4 sm:px-6">
       {status.type === "error" && (
         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded mb-6">
           <div className="flex items-center">
@@ -84,13 +80,8 @@ const WorkSchedule = ({ queueName, queueId }) => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50 sticky top-0">
               <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 bg-gray-50 sticky left-0 z-10"
-                >
-                  <div className="flex items-center space-x-1">
-                    <span className="font-bold text-lg">{queueName}</span>
-                  </div>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 bg-gray-50 sticky left-0 z-10">
+                  Godzina
                 </th>
                 {dates.map((date) => (
                   <th key={date} className="px-4 py-3 text-center font-medium text-gray-500 border-b border-gray-200">
@@ -100,54 +91,32 @@ const WorkSchedule = ({ queueName, queueId }) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {Object.entries(groupedByAgent).map(([agentId, schedules], index) => {
-                const agent = data.find((item) => item.agent_id === parseInt(agentId))?.agent || {};
-                return (
-                  <tr key={agentId} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-r border-gray-200 sticky left-0 z-10 bg-inherit">
-                      {agent.name}
-                    </td>
-                    {dates.map((date) => {
-                      const schedule = schedules.find((s) => s.date === date);
-                      return (
-                        <td key={`${agentId}-${date}`} className="px-4 py-4 whitespace-nowrap text-sm text-center">
-                          {schedule ? (
-                            <div className="relative group">
-                              {schedule.availability_status === AVAILABILITY_FULL_DAY ? (
-                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800">
-                                  <Clock className="mr-1 h-3 w-3" />
-                                  Cały dzień
-                                </span>
-                              ) : schedule.availability_status === AVAILABILITY_PARTIAL_DAY ? (
-                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-sky-100 text-sky-800">
-                                  <Clock className="mr-1 h-3 w-3" />
-                                  {formatTime(schedule.start_time)} - {formatTime(schedule.end_time)}
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-200 text-emerald-800">
-                                  <Clock className="mr-1 h-3 w-3" />
-                                  Nieobecność
-                                </span>
-                              )}
-                              {schedule.notes && (
-                                <div className="group relative inline-block ml-1">
-                                  <Info className="h-4 w-4 text-gray-400 cursor-help" />
-                                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute z-20 bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 p-2 bg-gray-800 text-white text-xs rounded shadow-lg">
-                                    {schedule.notes}
-                                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-                                  </div>
-                                </div>
-                              )}
+              {hours.map((hour, idx) => (
+                <tr key={hour} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 border-r border-gray-200 sticky left-0 z-10 bg-inherit">
+                    {formatHour(hour)}
+                  </td>
+                  {dates.map((date) => {
+                    // Znajdź wszystkich agentów mających dyżur w tej godzinie i dacie
+                    const agentsOnDuty = data
+                      .filter((item) => item.date === date && item.start_time === hour)
+                      .map((item) => agentNames[item.agent_id] || `Agent ${item.agent_id}`);
+                    return (
+                      <td key={`${hour}-${date}`} className="px-4 py-3 whitespace-nowrap text-sm text-center">
+                        {agentsOnDuty.length > 0 ? (
+                          agentsOnDuty.map((name, i) => (
+                            <div key={i} className="inline-block bg-emerald-100 text-emerald-800 rounded px-2 py-1 m-0.5 text-xs">
+                              {name}
                             </div>
-                          ) : (
-                            <span className="text-gray-300 inline-block w-full text-center">—</span>
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
+                          ))
+                        ) : (
+                          <span className="text-gray-300">—</span>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
