@@ -37,9 +37,6 @@ const WorkSchedule = ({ queueName, queueId }) => {
     }
   });
 
-  // Pomocnicza funkcja do formatowania zakresu godzin
-  const formatHourRange = (start, end) => `${start?.substring(0, 5)}-${end?.substring(0, 5)}`;
-
   // Pomocnicza funkcja do formatowania daty
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -96,50 +93,56 @@ const WorkSchedule = ({ queueName, queueId }) => {
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-gray-200">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50 sticky top-0">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 bg-gray-50 sticky left-0 z-10">
-                  Agent
-                </th>
-                {dates.map((date) => (
-                  <th key={date} className="px-4 py-3 text-center font-medium text-gray-500 border-b border-gray-200">
-                    {formatDate(date)}
+        <div>
+          <h2 className="text-2xl font-bold text-gray-700 mb-6 text-center">{queueName}</h2>
+          <div className="overflow-x-auto rounded-lg border border-gray-200">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50 sticky top-0">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 bg-gray-50 sticky left-0 z-10">
+                    Pracownik
                   </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {agents.map((agent, idx) => (
-                <tr key={agent.id} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 border-r border-gray-200 sticky left-0 z-10 bg-inherit">
-                    {agent.name}
-                  </td>
-                  {dates.map((date) => {
-                    // Znajdź i scal zakresy godzin tego agenta w danym dniu
-                    const ranges = data
-                      .filter((item) => item.agent_id === agent.id && item.date === date)
-                      .sort((a, b) => a.start_time.localeCompare(b.start_time));
-                    const merged = mergeRanges(ranges);
-                    return (
-                      <td key={`${agent.id}-${date}`} className="px-4 py-3 whitespace-nowrap text-sm text-center">
-                        {merged.length > 0 ? (
-                          merged.map((r, i) =>
-                            <span key={i}>
-                              {r.start.substring(0, 5)}-{r.end.substring(0, 5)}{i < merged.length - 1 ? ", " : ""}
-                            </span>
-                          )
-                        ) : (
-                          <span className="text-gray-300">—</span>
-                        )}
-                      </td>
-                    );
-                  })}
+                  {dates.map((date) => (
+                    <th key={date} className="px-4 py-3 text-center font-medium text-gray-500 border-b border-gray-200">
+                      {formatDate(date)}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {agents.map((agent, idx) => (
+                  <tr key={agent.id} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 border-r border-gray-200 sticky left-0 z-10 bg-inherit">
+                      {agent.name}
+                    </td>
+                    {dates.map((date) => {
+                      // Znajdź i scal zakresy godzin tego agenta w danym dniu
+                      const ranges = data
+                        .filter((item) => item.agent_id === agent.id && item.date === date)
+                        .sort((a, b) => a.start_time.localeCompare(b.start_time));
+                      const merged = mergeRanges(ranges);
+                      return (
+                        <td
+                          key={`${agent.id}-${date}`}
+                          className="px-4 py-3 whitespace-normal break-words text-sm text-center"
+                        >
+                          {merged.length > 0 ? (
+                            merged.map((r, i) => (
+                              <div key={i}>
+                                {r.start.substring(0, 5)}-{r.end.substring(0, 5)}
+                              </div>
+                            ))
+                          ) : (
+                            <span className="text-gray-300">—</span>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
