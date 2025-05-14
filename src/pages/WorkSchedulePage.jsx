@@ -1,23 +1,26 @@
 import { Calendar } from "lucide-react";
 import WorkSchedule from "../components/WorkSchedule";
-import { useEffect } from "react";
+import { useState } from "react";
 import { api } from "../api";
 
 const WorkSchedulePage = () => {
   const [status, setStatus] = useState({ type: null, message: null });
-  const [loading, setLoading] = useState(true);
-    useEffect(() => {
-      api
-        .get(`/work-schedule/generate`)
-        .then((res) => {
-           setStatus({ type: "success", message: "Udało się wygenerować grafik." });
-          setLoading(false);
-        })
-        .catch(() => {
-          setStatus({ type: "error", message: "Wystąpił błąd podczas generowania grafiku." });
-          setLoading(false);
-        });
-    }, []);
+  const [loading, setLoading] = useState(false);
+
+  // Funkcja do generowania grafiku
+  const handleGenerateSchedule = async () => {
+    setLoading(true);
+    setStatus({ type: null, message: null });
+    try {
+      await api.post(`/work-schedule/generate`);
+      setStatus({ type: "success", message: "Udało się wygenerować grafik." });
+      window.location.reload();
+    } catch {
+      setStatus({ type: "error", message: "Wystąpił błąd podczas generowania grafiku." });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className=" mx-auto py-8 px-4 sm:px-6">
@@ -29,10 +32,20 @@ const WorkSchedulePage = () => {
         <button
           onClick={handleGenerateSchedule}
           className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded"
+          disabled={loading}
         >
-          Wygeneruj nowy grafik
+          {loading ? "Generowanie..." : "Wygeneruj nowy grafik"}
         </button>
       </div>
+      {status.message && (
+        <div
+          className={`text-center mb-4 ${
+            status.type === "success" ? "text-green-600" : "text-red-600"
+          }`}
+        >
+          {status.message}
+        </div>
+      )}
       <WorkSchedule queueName="Kolejka ogólna" queueId={1} />
       <WorkSchedule queueName="Sprzedaż" queueId={2} />
       <WorkSchedule queueName="Do sprzedaż" queueId={3} />
